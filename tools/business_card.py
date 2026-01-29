@@ -21,7 +21,7 @@ def render():
             default_website = "metaweb.com.au"
             default_office = "1300 262 987"
 
-        st.markdown("<br>", unsafe_allow_html=True)
+
         with st.container():
             st.markdown("<p style='font-weight: 600; font-size: 0.9rem; color: #86868B; text-transform: uppercase; letter-spacing: 0.05em;'>Employee Info</p>", unsafe_allow_html=True)
             c1, c2 = st.columns(2)
