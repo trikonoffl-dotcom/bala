@@ -7,6 +7,9 @@ import datetime
 from PIL import Image, ImageOps
 from rembg import remove
 
+import cv2
+import numpy as np
+
 def remove_background(image_bytes):
     """Local background removal using rembg."""
     try:
@@ -14,6 +17,67 @@ def remove_background(image_bytes):
     except Exception as e:
         st.error(f"Local background removal failed: {e}")
         return None
+
+def auto_crop_face(image_bytes):
+    """Smartly crops the image to a Head-to-Chest composition."""
+    try:
+        # Convert bytes to numpy array
+        nparr = np.frombuffer(image_bytes, np.uint8)
+        img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
+        
+        # Convert to grayscale for detection
+        gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+        
+        # Load Face Cascade
+        # Try to use internal st/cv2 path or download if needed
+        # For simplicity in this env, we use the default included in cv2
+        face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
+        
+        faces = face_cascade.detectMultiScale(gray, 1.3, 5)
+        
+        if len(faces) == 0:
+            return image_bytes # No face found, return original
+            
+        # Pick the largest face (x, y, w, h)
+        faces = sorted(faces, key=lambda f: f[2] * f[3], reverse=True)
+        x, y, w, h = faces[0]
+        
+        # Calculate Crop Coordinates
+        # Top: Face Top - 0.5 * Face Height (Headroom)
+        # Bottom: Face Bottom + 1.2 * Face Height (Chest)
+        # Center: Face Center
+        
+        face_center_x = x + w // 2
+        
+        # ID Card Slot Ratio (approx 35mm x 45mm = 0.77). Let's aim for 0.8
+        target_ratio = 0.8
+        
+        # Determine crop height based on face size logic
+        crop_top = max(0, int(y - 0.6 * h))
+        crop_bottom = min(img.shape[0], int(y + h + 1.2 * h))
+        crop_h = crop_bottom - crop_top
+        
+        # Determine crop width based on ratio
+        crop_w = int(crop_h * target_ratio)
+        
+        # Centering width around face center
+        crop_left = max(0, face_center_x - crop_w // 2)
+        crop_right = min(img.shape[1], crop_left + crop_w)
+        
+        # Adjust if we hit edges
+        if crop_right - crop_left < crop_w:
+            crop_left = max(0, crop_right - crop_w)
+            
+        # Crop
+        cropped_img = img[crop_top:crop_bottom, crop_left:crop_right]
+        
+        # Convert back to bytes
+        is_success, buffer = cv2.imencode(".png", cropped_img)
+        return buffer.tobytes()
+        
+    except Exception as e:
+        print(f"Auto-crop failed: {e}")
+        return image_bytes
 
 def render():
     st.title("AI ID Card Generator")
@@ -44,12 +108,19 @@ def render():
         st.markdown("<h4 style='font-weight: 600; font-size: 1.25rem; margin-top: 2rem; margin-bottom: 1.5rem;'>Photo & Adjustments</h4>", unsafe_allow_html=True)
         with st.container(border=True):
             photo_file = st.file_uploader("Upload Portrait Photo", type=["jpg", "jpeg", "png"])
-            use_ai_removal = st.checkbox("Local AI Background Removal (Free)", value=True)
+            col_a, col_b = st.columns(2)
+            with col_a:
+                use_ai_removal = st.checkbox("Remove Background", value=True)
+            with col_b:
+                use_auto_crop = st.checkbox("Smart Auto-Crop", value=True, help="Automatically crops head-to-chest")
             
-            st.markdown("<p style='font-weight: 500; font-size: 0.75rem; color: #6B7280; text-transform: uppercase; letter-spacing: 0.05em; margin-top: 1rem; margin-bottom: 0.5rem;'>Precision Placement</p>", unsafe_allow_html=True)
-            scale = st.slider("Photo Scale", 0.5, 3.0, 1.0, 0.05)
-            x_offset = st.slider("Horizontal Move (X)", -100, 100, 0, 1)
-            y_offset = st.slider("Vertical Move (Y)", -100, 100, 0, 1)
+            if not use_auto_crop:
+                st.markdown("<p style='font-weight: 500; font-size: 0.75rem; color: #6B7280; text-transform: uppercase; letter-spacing: 0.05em; margin-top: 1rem; margin-bottom: 0.5rem;'>Precision Placement</p>", unsafe_allow_html=True)
+                scale = st.slider("Photo Scale", 0.5, 3.0, 1.0, 0.05)
+                x_offset = st.slider("Horizontal Move (X)", -100, 100, 0, 1)
+                y_offset = st.slider("Vertical Move (Y)", -100, 100, 0, 1)
+            else:
+                scale, x_offset, y_offset = 1.0, 0, 0
 
         st.markdown("<h4 style='font-weight: 600; font-size: 1.25rem; margin-top: 2rem; margin-bottom: 1.5rem;'>Back Side Details</h4>", unsafe_allow_html=True)
         with st.container(border=True):
@@ -74,6 +145,11 @@ def render():
             photo_bytes = photo_file.read()
             
             with st.spinner("AI is processing image..."):
+                # 1. Auto-Crop first (if enabled)
+                if use_auto_crop:
+                    photo_bytes = auto_crop_face(photo_bytes)
+
+                # 2. Background Removal (if enabled)
                 if use_ai_removal:
                     processed_photo = remove_background(photo_bytes)
                 else:
