@@ -92,27 +92,35 @@ def render():
                         page = doc[0]
                         
                         # Font Setup
-                        # Note: We'll use standard fonts as Poppins might not be available in 
-                        # the specific format needed for all systems without complex registration.
-                        # Rubik-Bold/Regular were used in the sample.
+                        current_dir = os.path.dirname(os.path.abspath(__file__))
+                        font_dir = os.path.join(current_dir, "..", "Poppins")
+                        if not os.path.exists(font_dir):
+                            font_dir = r"C:\Users\pabal\Documents\Businesscard\Poppins"
+                        
+                        font_bold = os.path.join(font_dir, "Poppins-Bold.ttf")
+                        font_reg = os.path.join(font_dir, "Poppins-Regular.ttf")
+                        
+                        # Register fonts with the page
+                        page.insert_font(fontname="pop-bold", fontfile=font_bold)
+                        page.insert_font(fontname="pop-reg", fontfile=font_reg)
                         
                         blue_text = (18/255, 34/255, 66/255) # Dark Blue
                         white_text = (1, 1, 1)
                         
                         # Text Insertion (Coordinates from sample analysis)
-                        # Name - Using slightly smaller fonts to avoid overflow
-                        page.insert_text((14.8, 147.6), first_name.upper(), fontsize=15, fontname="helv-bold", color=blue_text)
-                        page.insert_text((15.0, 168.7), last_name.upper(), fontsize=15, fontname="helv", color=blue_text)
+                        # Name
+                        page.insert_text((14.8, 147.6), first_name.upper(), fontsize=15, fontname="pop-bold", color=blue_text)
+                        page.insert_text((15.0, 168.7), last_name.upper(), fontsize=11, fontname="pop-reg", color=blue_text)
                         
                         # Title
-                        page.insert_text((15.5, 183.8), title, fontsize=8, fontname="helv", color=blue_text)
+                        page.insert_text((15.5, 183.8), title, fontsize=8, fontname="pop-reg", color=blue_text)
                         
                         # DOI
                         date_str = doj.strftime("%d-%m-%Y")
-                        page.insert_text((15.1, 197.3), f"D.O.J:  {date_str}", fontsize=8, fontname="helv", color=blue_text)
+                        page.insert_text((15.1, 197.3), f"D.O.J:  {date_str}", fontsize=8, fontname="pop-bold", color=blue_text)
                         
                         # ID Number (Bottom White Text)
-                        page.insert_text((15.6, 226.3), f"ID Number: {id_number}", fontsize=10, fontname="helv", color=white_text)
+                        page.insert_text((15.6, 226.3), f"ID Number: {id_number}", fontsize=10, fontname="pop-reg", color=white_text)
                         
                         # Photo Placement
                         # Target BBox: [-20, 30, 120, 180] (estimated center-left)
