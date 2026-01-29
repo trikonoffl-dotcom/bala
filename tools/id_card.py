@@ -76,9 +76,9 @@ def render():
                 try:
                     # Determine Path (Robust for Cloud and Local)
                     possible_paths = [
-                        os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "Templates", "idcard", "id card empty.pdf"), # Relative
-                        os.path.join(os.getcwd(), "Templates", "idcard", "id card empty.pdf"), # From Root
-                        r"C:\Users\pabal\Documents\Businesscard\Templates\idcard\id card empty.pdf" # Local Hardcoded
+                        os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "Templates", "idcard", "id_card_empty.pdf"), # Relative
+                        os.path.join(os.getcwd(), "Templates", "idcard", "id_card_empty.pdf"), # From Root
+                        r"C:\Users\pabal\Documents\Businesscard\Templates\idcard\id_card_empty.pdf" # Local Hardcoded
                     ]
                     
                     template_path = None
