@@ -36,7 +36,16 @@ def generate_card(template_path, data, style="Trikon"):
     text_color = (0, 0, 0)
     
     # Font Paths
-    font_base = r"C:\Users\pabal\Documents\Businesscard"
+    # Default to current project root
+    font_base = os.path.dirname(os.path.abspath(__file__))
+    # If font_base ends in 'tools' (if generator.py was moved), go up
+    if os.path.basename(font_base) == "tools":
+        font_base = os.path.dirname(font_base)
+    
+    # Check if local path exists as fallback
+    local_user_path = r"C:\Users\pabal\Documents\Businesscard"
+    if not os.path.exists(os.path.join(font_base, "Poppins")) and os.path.exists(local_user_path):
+        font_base = local_user_path
     
     if style == "Trikon":
         # Register Poppins Fonts
