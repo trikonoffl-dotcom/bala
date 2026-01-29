@@ -131,6 +131,7 @@ def render():
                         white_text = (1, 1, 1)
                         
                         # Front Text
+                        page0 = doc[0]
                         page0.insert_text((14.8, 148), first_name.upper(), fontsize=15, fontname=get_font("ru-bold"), color=blue_text)
                         page0.insert_text((15.0, 168), last_name.upper(), fontsize=11, fontname=get_font("ru-reg"), color=blue_text)
                         page0.insert_text((15.5, 183), title, fontsize=8, fontname=get_font("ru-reg"), color=blue_text)
