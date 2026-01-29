@@ -74,12 +74,18 @@ def render():
                 
             if processed_photo:
                 try:
-                    # Determine Path
-                    current_dir = os.path.dirname(os.path.abspath(__file__))
-                    template_path = os.path.join(current_dir, "..", "Templates", "idcard", "id card empty.pdf")
+                    # Determine Path (Robust for Cloud and Local)
+                    possible_paths = [
+                        os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "Templates", "idcard", "id card empty.pdf"), # Relative
+                        os.path.join(os.getcwd(), "Templates", "idcard", "id card empty.pdf"), # From Root
+                        r"C:\Users\pabal\Documents\Businesscard\Templates\idcard\id card empty.pdf" # Local Hardcoded
+                    ]
                     
-                    if not os.path.exists(template_path):
-                         template_path = r"C:\Users\pabal\Documents\Businesscard\Templates\idcard\id card empty.pdf"
+                    template_path = None
+                    for path in possible_paths:
+                        if os.path.exists(path):
+                            template_path = path
+                            break
                     
                     if os.path.exists(template_path):
                         doc = fitz.open(template_path)
@@ -156,6 +162,6 @@ def render():
                         
                         doc.close()
                     else:
-                        st.error("Template not found.")
+                        st.error(f"Template not found. Searched: {possible_paths}")
                 except Exception as e:
                     st.error(f"Error: {e}")
