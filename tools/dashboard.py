@@ -70,7 +70,6 @@ def render():
         </div>
         """, unsafe_allow_html=True)
 
-    st.markdown("<br>", unsafe_allow_html=True)
     st.divider()
 
     # History Table
@@ -81,8 +80,6 @@ def render():
         df['created_at'] = pd.to_datetime(df['created_at']).dt.strftime('%Y-%m-%d %H:%M')
         st.dataframe(df, use_container_width=True)
         
-        # Simple Chart
-        st.markdown("<br>", unsafe_allow_html=True)
         st.subheader("Growth Trends")
         if monthly_stats:
             chart_data = pd.DataFrame(list(monthly_stats.items()), columns=['Month', 'Count']).sort_values('Month')

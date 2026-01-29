@@ -28,7 +28,6 @@ def make_rounded(image, width, height, radius):
 def render():
     st.title("Welcome Aboard Generator")
     st.markdown("<p style='color: #86868B; font-size: 1.15rem; font-weight: 400; letter-spacing: -0.01em;'>Create premium welcome assets for your growing team.</p>", unsafe_allow_html=True)
-    st.markdown("<br>", unsafe_allow_html=True)
 
     col1, col2 = st.columns([1, 1.2], gap="large")
 
@@ -43,8 +42,6 @@ def render():
             with c2:
                 last_name = st.text_input("Last Name", "Kumar")
             title = st.text_input("Job Title", "Technical Support Executive")
-        
-        st.markdown("<br>", unsafe_allow_html=True)
         with st.container():
             st.markdown("<p style='font-weight: 600; font-size: 0.9rem; color: #86868B; text-transform: uppercase; letter-spacing: 0.05em;'>Join Date & Media</p>", unsafe_allow_html=True)
             date_obj = st.date_input("Joining Date", datetime.date(2026, 1, 12))
@@ -52,8 +49,6 @@ def render():
             
             suffix = get_date_suffix(date_obj.day)
             date_str = f"{date_obj.day}{suffix} {date_obj.strftime('%b %Y')}"
-        
-        st.markdown("<br>", unsafe_allow_html=True)
         generate_btn = st.button("Generate Welcome Image", use_container_width=True)
 
     with col2:

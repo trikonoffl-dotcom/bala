@@ -70,6 +70,17 @@ st.markdown("""
         box-shadow: 0 2px 4px rgba(0,0,0,0.02) !important;
     }
 
+    /* Reduce Top Padding of Main Content */
+    .block-container {
+        padding-top: 1rem !important;
+        padding-bottom: 0rem !important;
+    }
+
+    /* Hide Streamlit Header gap */
+    header[data-testid="stHeader"] {
+        display: none !important;
+    }
+
     /* Fix visibility of text in forms */
     .stTextInput label, .stSelectbox label {
         font-weight: 500 !important;
@@ -84,13 +95,11 @@ with st.sidebar:
     logo_path = r"images/trikon_logo.png"
     if os.path.exists(logo_path):
         # Center the logo and use a larger width closer to its native 235px
-        st.markdown('<div style="display: flex; justify-content: center; margin-bottom: 20px;">', unsafe_allow_html=True)
+        st.markdown('<div style="display: flex; justify-content: center;">', unsafe_allow_html=True)
         st.image(logo_path, width=220) 
         st.markdown('</div>', unsafe_allow_html=True)
     else:
         st.title("Trikon")
-    
-    st.markdown("<br>", unsafe_allow_html=True)
     
     # option_menu for professional app-style navigation
     selected = option_menu(

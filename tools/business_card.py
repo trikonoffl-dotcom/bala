@@ -6,7 +6,6 @@ import fitz # PyMuPDF
 def render():
     st.title("Business Card Generator")
     st.markdown("<p style='color: #86868B; font-size: 1.15rem; font-weight: 400; letter-spacing: -0.01em;'>Craft high-fidelity, professional business cards with precision.</p>", unsafe_allow_html=True)
-    st.markdown("<br>", unsafe_allow_html=True)
 
     col1, col2 = st.columns([1, 1.2], gap="large")
 
@@ -31,8 +30,6 @@ def render():
             with c2:
                 last_name = st.text_input("Last Name", "Doe")
             title = st.text_input("Job Title", "General Manager")
-        
-        st.markdown("<br>", unsafe_allow_html=True)
         with st.container():
             st.markdown("<p style='font-weight: 600; font-size: 0.9rem; color: #86868B; text-transform: uppercase; letter-spacing: 0.05em;'>Contact Details</p>", unsafe_allow_html=True)
             c1, c2 = st.columns(2)
@@ -46,8 +43,6 @@ def render():
                 email = st.text_input("Email", "john.doe@example.com")
             with c2:
                 website = st.text_input("Website", default_website)
-        
-        st.markdown("<br>", unsafe_allow_html=True)
         with st.container():
             st.markdown("<p style='font-weight: 600; font-size: 0.9rem; color: #86868B; text-transform: uppercase; letter-spacing: 0.05em;'>Office Location</p>", unsafe_allow_html=True)
             addresses = [
