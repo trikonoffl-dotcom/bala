@@ -13,12 +13,12 @@ def verify_login(email: str, password: str):
         pwd_hash = hash_password(password)
         
         # DEBUG LOGGING (Remove in production)
-        st.write(f"Attempting login for: {email}")
-        st.write(f"Hash formatted: {pwd_hash}")
+        # st.write(f"Attempting login for: {email}")
+        # st.write(f"Hash formatted: {pwd_hash}")
         
         response = supabase.table("users").select("*").eq("email", email).eq("password_hash", pwd_hash).execute()
         
-        st.write(f"DB Response: {response}")
+        # st.write(f"DB Response: {response}")
         
         if response.data and len(response.data) > 0:
             user = response.data[0]
