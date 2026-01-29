@@ -129,6 +129,7 @@ with st.sidebar:
                 "font-weight": "500"
             },
             "nav-link-selected": {"background-color": "#0071E3", "color": "white"},
+            "icon-selected": {"color": "#FFFFFF"},
         }
     )
 
