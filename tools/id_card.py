@@ -30,12 +30,18 @@ def remove_background(image_bytes):
 
 def render():
     st.title("AI ID Card Generator")
-    st.markdown("<p style='color: #6B7280; font-size: 1.15rem; font-weight: 400; letter-spacing: -0.01em;'>AI-powered ID cards with automatic background removal.</p>", unsafe_allow_html=True)
+    st.markdown("<p style='color: #6B7280; font-size: 1.15rem; font-weight: 400; letter-spacing: -0.01em;'>AI-powered ID cards with automatic background removal and backside details.</p>", unsafe_allow_html=True)
+
+    # Office Addresses
+    offices = {
+        "Chennai": "Centre Point 3 , 7th Floor\n2/4 Mount Ponnamallee High Road\nManapakkam, Porur, Chennai 600089",
+        "Ahmedabad": "COLONNADE-2, 1105, 11th Floor\nbehind Rajpath Rangoli Road\nBodakdev, Ahmedabad, Gujarat 380059"
+    }
 
     col1, col2 = st.columns([1, 1.2], gap="large")
 
     with col1:
-        st.markdown("<h4 style='font-weight: 600; font-size: 1.25rem; margin-bottom: 1.5rem;'>Employee Details</h4>", unsafe_allow_html=True)
+        st.markdown("<h4 style='font-weight: 600; font-size: 1.25rem; margin-bottom: 1.5rem;'>Front Side Details</h4>", unsafe_allow_html=True)
         
         with st.container(border=True):
             st.markdown("<p style='font-weight: 500; font-size: 0.75rem; color: #6B7280; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 1rem;'>Basic Identity</p>", unsafe_allow_html=True)
@@ -48,6 +54,16 @@ def render():
             id_number = st.text_input("ID Number", "TRC00049")
             doj = st.date_input("Joining Date", datetime.date(2025, 11, 17))
         
+        st.markdown("<h4 style='font-weight: 600; font-size: 1.25rem; margin-top: 2rem; margin-bottom: 1.5rem;'>Back Side Details</h4>", unsafe_allow_html=True)
+        with st.container(border=True):
+            st.markdown("<p style='font-weight: 500; font-size: 0.75rem; color: #6B7280; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 1rem;'>Emergency & Health</p>", unsafe_allow_html=True)
+            emergency_no = st.text_input("Emergency Number", "9566191956")
+            blood_group = st.selectbox("Blood Group", ["O+", "O-", "A+", "A-", "B+", "B-", "AB+", "AB-"], index=0)
+            
+            st.markdown("<p style='font-weight: 500; font-size: 0.75rem; color: #6B7280; text-transform: uppercase; letter-spacing: 0.05em; margin-top: 1rem; margin-bottom: 0.5rem;'>Office Address</p>", unsafe_allow_html=True)
+            office_choice = st.selectbox("Select Office", list(offices.keys()))
+            office_address = st.text_area("Edit Address", offices[office_choice], height=100)
+        
         with st.container(border=True):
             st.markdown("<p style='font-weight: 500; font-size: 0.75rem; color: #6B7280; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 1rem;'>Profile Media</p>", unsafe_allow_html=True)
             photo_file = st.file_uploader("Upload Portrait Photo", type=["jpg", "jpeg", "png"])
@@ -56,17 +72,16 @@ def render():
         generate_btn = st.button("Generate ID Card", use_container_width=True)
 
     with col2:
-        st.markdown("<h4 style='font-weight: 600; font-size: 1.25rem; margin-bottom: 1.5rem;'>Live Preview</h4>")
+        st.markdown("<h4 style='font-weight: 600; font-size: 1.25rem; margin-bottom: 1.5rem;'>Final Preview</h4>")
         
         if not (generate_btn and photo_file):
              with st.container(border=True):
-                st.info("Upload a photo and fill in the details to see the preview.", icon="🪪")
+                st.info("Upload a photo and fill in the details to generate the card.", icon="🪪")
 
         if generate_btn and photo_file:
-            # Process Background Removal
             photo_bytes = photo_file.read()
             
-            with st.spinner("AI is removing background and aligning..."):
+            with st.spinner("AI is processing image and generating PDF..."):
                 if remove_bg:
                     processed_photo = remove_background(photo_bytes)
                 else:
@@ -74,91 +89,96 @@ def render():
                 
             if processed_photo:
                 try:
-                    # Determine Path (Robust for Cloud and Local)
                     possible_paths = [
-                        os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "Templates", "idcard", "id_card_empty.pdf"), # Relative
-                        os.path.join(os.getcwd(), "Templates", "idcard", "id_card_empty.pdf"), # From Root
-                        r"C:\Users\pabal\Documents\Businesscard\Templates\idcard\id_card_empty.pdf" # Local Hardcoded
+                        os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "Templates", "idcard", "id_card_empty.pdf"),
+                        os.path.join(os.getcwd(), "Templates", "idcard", "id_card_empty.pdf"),
+                        r"C:\Users\pabal\Documents\Businesscard\Templates\idcard\id_card_empty.pdf"
                     ]
                     
-                    template_path = None
-                    for path in possible_paths:
-                        if os.path.exists(path):
-                            template_path = path
-                            break
+                    template_path = next((p for p in possible_paths if os.path.exists(p)), None)
                     
-                    if template_path and os.path.exists(template_path):
+                    if template_path:
                         doc = fitz.open(template_path)
-                        page = doc[0]
                         
-                        # Font Setup
+                        # --- FONT REGISTRATION ---
                         current_dir = os.path.dirname(os.path.abspath(__file__))
-                        font_dir = os.path.join(current_dir, "..", "Poppins")
+                        font_dir = os.path.join(current_dir, "..", "fonts", "Rubik", "static")
                         if not os.path.exists(font_dir):
-                            font_dir = r"C:\Users\pabal\Documents\Businesscard\Poppins"
+                            font_dir = r"C:\Users\pabal\Documents\Businesscard\fonts\Rubik\static"
                         
-                        font_bold = os.path.join(font_dir, "Poppins-Bold.ttf")
-                        font_reg = os.path.join(font_dir, "Poppins-Regular.ttf")
+                        fonts_map = {
+                            "ru-bold": os.path.join(font_dir, "Rubik-Bold.ttf"),
+                            "ru-reg": os.path.join(font_dir, "Rubik-Regular.ttf"),
+                            "ru-semi": os.path.join(font_dir, "Rubik-SemiBold.ttf"),
+                            "ru-italic": os.path.join(font_dir, "Rubik-Italic.ttf")
+                        }
                         
-                        # Register fonts with the page
-                        page.insert_font(fontname="pop-bold", fontfile=font_bold)
-                        page.insert_font(fontname="pop-reg", fontfile=font_reg)
+                        # FRONT PAGE (Index 0)
+                        page0 = doc[0]
+                        for name, path in fonts_map.items():
+                            if os.path.exists(path):
+                                page0.insert_font(fontname=name, fontfile=path)
                         
-                        blue_text = (18/255, 34/255, 66/255) # Dark Blue
+                        blue_text = (18/255, 34/255, 66/255)
                         white_text = (1, 1, 1)
                         
-                        # Text Insertion (Coordinates from sample analysis)
-                        # Name - Using slightly smaller fonts to avoid overflow and clashing with photo
-                        page.insert_text((14.8, 150), first_name.upper(), fontsize=14, fontname="pop-bold", color=blue_text)
-                        page.insert_text((15.0, 170), last_name.upper(), fontsize=10, fontname="pop-reg", color=blue_text)
+                        # Front Text Insertion
+                        page0.insert_text((14.8, 148), first_name.upper(), fontsize=15, fontname="ru-bold", color=blue_text)
+                        page0.insert_text((15.0, 168), last_name.upper(), fontsize=11, fontname="ru-reg", color=blue_text)
+                        page0.insert_text((15.5, 183), title, fontsize=8, fontname="ru-reg", color=blue_text)
                         
-                        # Title
-                        page.insert_text((15.5, 185), title, fontsize=8, fontname="pop-reg", color=blue_text)
-                        
-                        # DOI
                         date_str = doj.strftime("%d-%m-%Y")
-                        page.insert_text((15.1, 198), f"D.O.J:  {date_str}", fontsize=8, fontname="pop-bold", color=blue_text)
+                        page0.insert_text((15.1, 196), f"D.O.J:  {date_str}", fontsize=8, fontname="ru-bold", color=blue_text)
+                        page0.insert_text((15.6, 226), f"ID Number: {id_number}", fontsize=10, fontname="ru-reg", color=white_text)
                         
-                        # ID Number (Bottom White Text)
-                        page.insert_text((15.6, 226.3), f"ID Number: {id_number}", fontsize=10, fontname="pop-reg", color=white_text)
-                        
-                        # Photo Placement
-                        # User Request: Reduced size and sit exactly on the line above the name
-                        # Setting bottom y to 126 (Name top is approx 136) - Moved 2px up from 128
-                        # Setting top y to 28, and narrowing the width for a sharper look
+                        # Front Photo
                         photo_rect = fitz.Rect(15, 28, 110, 126)
+                        # The original code had PIL image processing here, but the instruction implies direct stream usage.
+                        # If further image manipulation (e.g., cropping, resizing) is needed, PIL should be re-integrated.
+                        page0.insert_image(photo_rect, stream=processed_photo)
                         
-                        # Process image to ensure it fills the space correctly
-                        img = Image.open(io.BytesIO(processed_photo))
-                        
-                        # Maintain aspect ratio while filling the height (128 - 30 = 98)
-                        img_byte_arr = io.BytesIO()
-                        img.save(img_byte_arr, format='PNG')
-                        final_photo_bytes = img_byte_arr.getvalue()
-
-                        page.insert_image(photo_rect, stream=final_photo_bytes)
+                        # BACK PAGE (Index 1)
+                        if len(doc) > 1:
+                            page1 = doc[1]
+                            for name, path in fonts_map.items():
+                                if os.path.exists(path):
+                                    page1.insert_font(fontname=name, fontfile=path)
+                            
+                            # Backside Text
+                            page1.insert_text((20, 93), f"Emergency Number: {emergency_no}", fontsize=7, fontname="ru-reg", color=white_text)
+                            page1.insert_text((49, 106), f"Blood Group: {blood_group}", fontsize=7, fontname="ru-reg", color=white_text)
+                            
+                            # Backside Title
+                            page1.insert_text((20, 167), "Trikon Telesoft Private Limited", fontsize=7, fontname="ru-semi", color=white_text)
+                            
+                            # Address Multi-line
+                            addr_lines = office_address.split("\n")
+                            y_offset = 173
+                            for line in addr_lines:
+                                page1.insert_text((15, y_offset), line.strip(), fontsize=6.5, fontname="ru-reg", color=white_text)
+                                y_offset += 8.5
                         
                         # Log to Supabase
                         import utils.db as db
-                        db.log_generation(
-                            tool="ID Card",
-                            name=f"{first_name} {last_name}",
-                            metadata={"id": id_number, "bg_removed": remove_bg}
-                        )
+                        db.log_generation(tool="ID Card", name=f"{first_name} {last_name}", metadata={"id": id_number})
 
-                        # Preview
-                        pix = page.get_pixmap(matrix=fitz.Matrix(3, 3))
-                        img_bytes = pix.tobytes("png")
-                        st.image(img_bytes, caption="ID Card Preview", use_column_width=True)
+                        # Preview (Front & Back)
+                        st.markdown("### Front Side")
+                        pix0 = page0.get_pixmap(matrix=fitz.Matrix(3, 3))
+                        st.image(pix0.tobytes("png"), use_column_width=True)
+                        
+                        if len(doc) > 1:
+                            st.markdown("### Back Side")
+                            pix1 = doc[1].get_pixmap(matrix=fitz.Matrix(3, 3))
+                            st.image(pix1.tobytes("png"), use_column_width=True)
                         
                         pdf_bytes = doc.write()
                         st.download_button(
-                            label="Download ID Card PDF",
+                            label="Download Full ID Card (2 Pages)",
                             data=pdf_bytes,
                             file_name=f"ID_Card_{id_number}.pdf",
                             mime="application/pdf"
                         )
-                        
                         doc.close()
                     else:
                         st.error(f"Template not found. Searched: {possible_paths}")
