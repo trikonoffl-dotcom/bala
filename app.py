@@ -87,9 +87,66 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
+# Sidebar Header with Logo
+with st.sidebar:
+    logo_path = r"C:\Users\pabal\Documents\Businesscard\images\trikon-logo-blue.png"
+    if os.path.exists(logo_path):
+        st.image(logo_path, use_column_width=True)
+    else:
+        st.title("Trikon")
+    st.markdown("<br>", unsafe_allow_html=True)
+
+# Custom App-Style Navigation CSS
+st.markdown("""
+<style>
+    /* Styled Radio as Vertical Menu */
+    [data-testid="stSidebar"] .stRadio > div {
+        background-color: transparent !important;
+        gap: 8px !important;
+    }
+    
+    [data-testid="stSidebar"] .stRadio label {
+        background-color: #F5F5F7 !important;
+        padding: 0.8rem 1rem !important;
+        border-radius: 12px !important;
+        border: 1px solid #D2D2D7 !important;
+        margin-bottom: 8px !important;
+        width: 100% !important;
+        display: block !important;
+        cursor: pointer !important;
+        transition: all 0.2s ease !important;
+        color: #1D1D1F !important;
+        font-weight: 500 !important;
+    }
+    
+    /* Hover effect */
+    [data-testid="stSidebar"] .stRadio label:hover {
+        background-color: #E2E2E7 !important;
+        transform: translateX(4px) !important;
+    }
+    
+    /* Active/Selected State - Streamlit marks the active radio specifically */
+    [data-testid="stSidebar"] div[role="radiogroup"] > div[data-checked="true"] > label {
+        background-color: var(--accent) !important;
+        color: white !important;
+        border-color: var(--accent) !important;
+        box-shadow: 0 4px 12px rgba(0, 113, 227, 0.2) !important;
+    }
+
+    /* Hide the actual radio circle */
+    [data-testid="stSidebar"] .stRadio div[data-testid="stMarkdownContainer"] p {
+        margin-left: 0px !important;
+    }
+    
+    [data-testid="stSidebar"] .stRadio label div:first-child {
+        display: none !important;
+    }
+</style>
+""", unsafe_allow_html=True)
+
 # Navigation
-st.sidebar.title("Navigation")
-tool = st.sidebar.radio("Select Tool", ["Dashboard", "Business Card Generator", "Welcome Aboard Generator", "Coming Soon"])
+st.sidebar.markdown("<p style='font-weight: 600; font-size: 0.85rem; color: #86868B; text-transform: uppercase; letter-spacing: 0.05em; padding-left: 5px;'>Main Menu</p>", unsafe_allow_html=True)
+tool = st.sidebar.radio("Select Tool", ["Dashboard", "Business Card Generator", "Welcome Aboard Generator", "Coming Soon"], label_visibility="collapsed")
 
 if tool == "Dashboard":
     tools.dashboard.render()
