@@ -49,10 +49,12 @@ def auto_crop_face(image_bytes):
         
         face_center_x = x + w // 2
         
-        # ID Card Slot Ratio (approx 35mm x 45mm = 0.77). Let's aim for 0.8
-        target_ratio = 0.8
+        # ID Card Slot Ratio (Matches the PDF slot 95x98 approx 0.97)
+        # Increased from 0.8 to include more shoulders (prevent left/right crop)
+        target_ratio = 95 / 98 
         
         # Determine crop height based on face size logic
+        # Slightly zoomed out to show more context if needed, but keeping existing vertical logic
         crop_top = max(0, int(y - 0.6 * h))
         crop_bottom = min(img.shape[0], int(y + h + 1.2 * h))
         crop_h = crop_bottom - crop_top
@@ -82,6 +84,36 @@ def auto_crop_face(image_bytes):
 def render():
     st.title("AI ID Card Generator")
     st.markdown("<p style='color: #6B7280; font-size: 1.15rem; font-weight: 400; letter-spacing: -0.01em;'>AI-powered ID cards with local background removal and precision alignment tools.</p>", unsafe_allow_html=True)
+    
+    # ... (skipping unchanged parts) ...
+
+                        # --- DYNAMIC PHOTO PLACEMENT ---
+                        # Base coordinates adjusted per user request:
+                        # Move left 4px (15 -> 11)
+                        # Move 0.5px (assumed Y adjustment 28 -> 28.5)
+                        base_x, base_y = 11 + x_offset, 28.5 + y_offset
+                        base_w, base_h = 95 * scale, 98 * scale
+                        
+                        # Center the scaled image within the movement
+                        # Adjust base_x/y to keep it centered when scaling
+                        adj_x = base_x - (base_w - 95) / 2
+                        adj_y = base_y - (base_h - 98) / 2
+                        
+                        photo_rect = fitz.Rect(adj_x, adj_y, adj_x + base_w, adj_y + base_h)
+                        page0.insert_image(photo_rect, stream=processed_photo)
+                        
+                        # BACK PAGE (Index 1)
+                        if len(doc) > 1:
+                            page1 = doc[1]
+                            
+                            page1.insert_text((20, 93), f"Emergency Number: {emergency_no}", fontsize=7, fontname=get_font("ru-reg"), color=white_text)
+                            page1.insert_text((49, 106), f"Blood Group: {blood_group}", fontsize=7, fontname=get_font("ru-reg"), color=white_text)
+                            
+                            
+                            # Address: Centered horizontally, moved up 2px (176 -> 174)
+                            # Using insert_textbox with align=1 (Center) matches the requirement
+                            addr_rect = fitz.Rect(0, 174, page1.rect.width, page1.rect.height)
+                            page1.insert_textbox(addr_rect, office_address, fontsize=6.5, fontname=get_font("ru-reg"), color=white_text, align=1)
 
     # Office Addresses
     offices = {
