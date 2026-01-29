@@ -87,7 +87,7 @@ def render():
                             template_path = path
                             break
                     
-                    if os.path.exists(template_path):
+                    if template_path and os.path.exists(template_path):
                         doc = fitz.open(template_path)
                         page = doc[0]
                         
