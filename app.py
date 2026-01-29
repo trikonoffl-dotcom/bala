@@ -119,7 +119,7 @@ with st.sidebar:
         default_index=0,
         styles={
             "container": {"padding": "0!important", "background-color": "transparent"},
-            "icon": {"color": "#86868B", "font-size": "1.1rem"}, 
+            "icon": {"font-size": "1.1rem"}, # Removed specific color to allow inheritance
             "nav-link": {
                 "font-size": "0.95rem", 
                 "text-align": "left", 
@@ -128,8 +128,7 @@ with st.sidebar:
                 "color": "#1D1D1F",
                 "font-weight": "500"
             },
-            "nav-link-selected": {"background-color": "#0071E3", "color": "white"},
-            "icon-selected": {"color": "#FFFFFF"},
+            "nav-link-selected": {"background-color": "#0071E3", "color": "white !important"},
         }
     )
 
