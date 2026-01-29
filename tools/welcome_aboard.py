@@ -50,7 +50,14 @@ def render():
     with col2:
         st.subheader("Preview")
         if generate_btn and photo_file:
-            template_path = r"C:\Users\pabal\Documents\Businesscard\Templates\welcome aboard - Without name.pdf"
+            # Relative path for Cloud and Local
+            current_dir = os.path.dirname(os.path.abspath(__file__))
+            templates_dir = os.path.join(current_dir, "..", "Templates")
+            template_path = os.path.join(templates_dir, "welcome aboard - Without name.pdf")
+            
+            # Fallback for local dev if relative fails
+            if not os.path.exists(template_path):
+                template_path = r"C:\Users\pabal\Documents\Businesscard\Templates\welcome aboard - Without name.pdf"
             
             if os.path.exists(template_path):
                 try:
@@ -58,8 +65,10 @@ def render():
                     doc = fitz.open(template_path)
                     page = doc[0]
                     
-                    # Font Setup (Using Poppins as fallback)
-                    font_base = r"C:\Users\pabal\Documents\Businesscard"
+                    # Font Setup
+                    font_base = os.path.join(current_dir, "..")
+                    if not os.path.exists(os.path.join(font_base, "Poppins")):
+                        font_base = r"C:\Users\pabal\Documents\Businesscard"
                     font_bold = os.path.join(font_base, "Poppins", "Poppins-Bold.ttf")
                     font_reg = os.path.join(font_base, "Poppins", "Poppins-Regular.ttf") 
                     
