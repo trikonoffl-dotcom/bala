@@ -1,4 +1,5 @@
 import streamlit as st
+import os
 import tools.business_card
 import tools.welcome_aboard
 import tools.dashboard
@@ -89,7 +90,7 @@ st.markdown("""
 
 # Sidebar Header with Logo
 with st.sidebar:
-    logo_path = r"C:\Users\pabal\Documents\Businesscard\images\trikon-logo-blue.png"
+    logo_path = r"images/trikon-logo-blue.png"
     if os.path.exists(logo_path):
         st.image(logo_path, use_column_width=True)
     else:
