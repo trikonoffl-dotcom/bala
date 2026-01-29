@@ -82,7 +82,7 @@ st.markdown("""
     /* Adjust Padding of Main Content */
     .block-container {
         padding-top: 1rem !important;
-        padding-bottom: 15px !important;
+        padding-bottom: 50px !important;
     }
 
     /* Hide Streamlit Header gap */
