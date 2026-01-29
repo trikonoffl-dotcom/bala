@@ -124,9 +124,9 @@ def render():
                         
                         # Photo Placement
                         # User Request: Reduced size and sit exactly on the line above the name
-                        # Setting bottom y to 128 (Name top is approx 136)
-                        # Setting top y to 35, and narrowing the width for a sharper look
-                        photo_rect = fitz.Rect(15, 30, 110, 128)
+                        # Setting bottom y to 126 (Name top is approx 136) - Moved 2px up from 128
+                        # Setting top y to 28, and narrowing the width for a sharper look
+                        photo_rect = fitz.Rect(15, 28, 110, 126)
                         
                         # Process image to ensure it fills the space correctly
                         img = Image.open(io.BytesIO(processed_photo))
