@@ -24,6 +24,9 @@ def remove_background(image_bytes):
     
     if response.status_code == 200:
         return response.content
+    elif response.status_code == 402:
+        st.error("💡 **Photoroom API Quota Exhausted**: You've used all your AI background removal credits. Please upgrade your plan at [photoroom.com](https://app.photoroom.com/api-dashboard) or **uncheck** 'AI Background Removal' to proceed with the original photo.")
+        return None
     else:
         st.error(f"Background removal failed: {response.status_code} - {response.text}")
         return None
