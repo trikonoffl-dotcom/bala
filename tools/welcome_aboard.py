@@ -26,29 +26,38 @@ def make_rounded(image, width, height, radius):
     return rounded_img
 
 def render():
-    st.title("Welcome Aboard Generator")
+    st.title("🚀 Welcome Aboard Generator")
+    st.markdown("<p style='color: #64748B; font-size: 1.1rem;'>Create stunning welcome images for new team members.</p>", unsafe_allow_html=True)
+    st.divider()
 
-    col1, col2 = st.columns([1, 2])
+    col1, col2 = st.columns([1, 1.2], gap="large")
 
     with col1:
-        st.subheader("Employee Details")
+        st.subheader("🛠️ Employee Setup")
         
-        first_name = st.text_input("First Name", "Suresh")
-        last_name = st.text_input("Last Name", "Kumar")
-        title = st.text_input("Job Title", "Technical Support Executive")
+        with st.container():
+            st.markdown("##### 👤 Personal Info")
+            c1, c2 = st.columns(2)
+            with c1:
+                first_name = st.text_input("First Name", "Suresh")
+            with c2:
+                last_name = st.text_input("Last Name", "Kumar")
+            title = st.text_input("Job Title", "Technical Support Executive")
         
-        # Date Picker
-        date_obj = st.date_input("Date", datetime.date(2026, 1, 12))
-        suffix = get_date_suffix(date_obj.day)
-        # Safest cross-platform way for day without zero padding + suffix:
-        date_str = f"{date_obj.day}{suffix} {date_obj.strftime('%b %Y')}"
+        st.markdown("<br>", unsafe_allow_html=True)
+        with st.container():
+            st.markdown("##### 📅 Join Date & Media")
+            date_obj = st.date_input("Joining Date", datetime.date(2026, 1, 12))
+            photo_file = st.file_uploader("Upload Profile Photo", type=["jpg", "jpeg", "png"])
+            
+            suffix = get_date_suffix(date_obj.day)
+            date_str = f"{date_obj.day}{suffix} {date_obj.strftime('%b %Y')}"
         
-        photo_file = st.file_uploader("Upload Photo", type=["jpg", "jpeg", "png"])
-        
-        generate_btn = st.button("Generate Welcome Image")
+        st.markdown("<br>", unsafe_allow_html=True)
+        generate_btn = st.button("✨ Generate Welcome Image", use_container_width=True)
 
     with col2:
-        st.subheader("Preview")
+        st.subheader("🖼️ Final Result")
         if generate_btn and photo_file:
             # Relative path for Cloud and Local
             current_dir = os.path.dirname(os.path.abspath(__file__))

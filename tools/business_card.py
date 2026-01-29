@@ -4,12 +4,14 @@ import os
 import fitz # PyMuPDF
 
 def render():
-    st.title("Business Card Generator")
+    st.title("📇 Business Card Generator")
+    st.markdown("<p style='color: #64748B; font-size: 1.1rem;'>Professional, high-quality business cards in seconds.</p>", unsafe_allow_html=True)
+    st.divider()
 
-    col1, col2 = st.columns([1, 2])
+    col1, col2 = st.columns([1, 1.2], gap="large")
 
     with col1:
-        st.subheader("Card Details")
+        st.subheader("🛠️ Card Configuration")
         template = st.selectbox("Select Template", ["Trikon", "Metaweb"])
         
         # Style-Specific Defaults
@@ -20,40 +22,57 @@ def render():
             default_website = "metaweb.com.au"
             default_office = "1300 262 987"
 
-        first_name = st.text_input("First Name", "John")
-        last_name = st.text_input("Last Name", "Doe")
-        title = st.text_input("Job Title", "General Manager")
+        with st.container():
+            st.markdown("##### 👤 Employee Info")
+            c1, c2 = st.columns(2)
+            with c1:
+                first_name = st.text_input("First Name", "John")
+            with c2:
+                last_name = st.text_input("Last Name", "Doe")
+            title = st.text_input("Job Title", "General Manager")
         
-        phone_mobile = st.text_input("Mobile Phone", "0400 000 000")
-        phone_office = st.text_input("Office Phone", default_office)
-        email = st.text_input("Email", "john.doe@example.com")
-        website = st.text_input("Website", default_website)
-        
-        addresses = [
-            "3/7 Meridian Place, Bella Vista NSW 2153, Australia",
-            "Suite 208, 111 Overton Rd, Williams Landing VIC 3030, Australia",
-            "Unit 3, 304 Montague Road, West End QLD 4101, Australia",
-            "Suite 2, 161 Maitland Road, Mayfield NSW 2304, Australia",
-            "Level 5, Suite 5, 221-229 Crown St, Wollongong NSW, Australia",
-            "Level 5, Suite 5, 221-229 Crown St, Wollongong NSW 2500, Australia (Business Hub)",
-            "Shop 4, 285 Windsor St, Richmond NSW 2753, Australia (Hawkesbury Business Hub)"
-        ]
-        
-        selected_address = st.selectbox("Select Address", addresses)
-        
-        # Smart split for better balance
-        parts = selected_address.split(", ")
-        # If the first part is short (like "Suite 208"), combine it with the second part
-        if len(parts) > 2 and (len(parts[0]) < 12 or any(x in parts[0].lower() for x in ['suite', 'unit', 'level', 'shop'])):
-            default_addr1 = f"{parts[0]}, {parts[1]}"
-            default_addr2 = ", ".join(parts[2:])
-        else:
-            default_addr1 = parts[0]
-            default_addr2 = ", ".join(parts[1:])
+        st.markdown("<br>", unsafe_allow_html=True)
+        with st.container():
+            st.markdown("##### 📞 Contact Details")
+            c1, c2 = st.columns(2)
+            with c1:
+                phone_mobile = st.text_input("Mobile Phone", "0400 000 000")
+            with c2:
+                phone_office = st.text_input("Office Phone", default_office)
             
-        # Allow user to manually refine the lines
-        address_line1 = st.text_input("Refine Address Line 1", default_addr1)
-        address_line2 = st.text_input("Refine Address Line 2", default_addr2)
+            c1, c2 = st.columns(2)
+            with c1:
+                email = st.text_input("Email", "john.doe@example.com")
+            with c2:
+                website = st.text_input("Website", default_website)
+        
+        st.markdown("<br>", unsafe_allow_html=True)
+        with st.container():
+            st.markdown("##### 📍 Office Location")
+            addresses = [
+                "3/7 Meridian Place, Bella Vista NSW 2153, Australia",
+                "Suite 208, 111 Overton Rd, Williams Landing VIC 3030, Australia",
+                "Unit 3, 304 Montague Road, West End QLD 4101, Australia",
+                "Suite 2, 161 Maitland Road, Mayfield NSW 2304, Australia",
+                "Level 5, Suite 5, 221-229 Crown St, Wollongong NSW, Australia",
+                "Level 5, Suite 5, 221-229 Crown St, Wollongong NSW 2500, Australia (Business Hub)",
+                "Shop 4, 285 Windsor St, Richmond NSW 2753, Australia (Hawkesbury Business Hub)"
+            ]
+            selected_address = st.selectbox("Select Address", addresses)
+            
+            # Smart split for better balance
+            parts = selected_address.split(", ")
+            # If the first part is short (like "Suite 208"), combine it with the second part
+            if len(parts) > 2 and (len(parts[0]) < 12 or any(x in parts[0].lower() for x in ['suite', 'unit', 'level', 'shop'])):
+                default_addr1 = f"{parts[0]}, {parts[1]}"
+                default_addr2 = ", ".join(parts[2:])
+            else:
+                default_addr1 = parts[0]
+                default_addr2 = ", ".join(parts[1:])
+                
+            # Allow user to manually refine the lines
+            address_line1 = st.text_input("Refine Address Line 1", default_addr1)
+            address_line2 = st.text_input("Refine Address Line 2", default_addr2)
 
         data = {
             "first_name": first_name,
