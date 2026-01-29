@@ -5,35 +5,19 @@ import io
 import fitz
 import datetime
 from PIL import Image, ImageOps
-
-# Photoroom API Key (Live)
-PHOTOROOM_API_KEY = "sk_pr_default_badcd4bd9dd67dee9a1bbc4912c109f6d21a7cb1"
+from rembg import remove
 
 def remove_background(image_bytes):
-    """Call Photoroom API to remove background."""
-    url = "https://sdk.photoroom.com/v1/segment"
-    headers = {
-        "x-api-key": PHOTOROOM_API_KEY,
-        "Accept": "image/png"
-    }
-    files = {
-        "image_file": ("image.jpg", image_bytes, "image/jpeg")
-    }
-    
-    response = requests.post(url, headers=headers, files=files)
-    
-    if response.status_code == 200:
-        return response.content
-    elif response.status_code == 402:
-        st.error("💡 **Photoroom API Quota Exhausted**: You've used all your AI background removal credits. Please upgrade your plan at [photoroom.com](https://app.photoroom.com/api-dashboard) or **uncheck** 'AI Background Removal' to proceed with the original photo.")
-        return None
-    else:
-        st.error(f"Background removal failed: {response.status_code} - {response.text}")
+    """Local background removal using rembg."""
+    try:
+        return remove(image_bytes)
+    except Exception as e:
+        st.error(f"Local background removal failed: {e}")
         return None
 
 def render():
     st.title("AI ID Card Generator")
-    st.markdown("<p style='color: #6B7280; font-size: 1.15rem; font-weight: 400; letter-spacing: -0.01em;'>AI-powered ID cards with automatic background removal and backside details.</p>", unsafe_allow_html=True)
+    st.markdown("<p style='color: #6B7280; font-size: 1.15rem; font-weight: 400; letter-spacing: -0.01em;'>AI-powered ID cards with local background removal and precision alignment tools.</p>", unsafe_allow_html=True)
 
     # Office Addresses
     offices = {
@@ -57,6 +41,16 @@ def render():
             id_number = st.text_input("ID Number", "TRC00049")
             doj = st.date_input("Joining Date", datetime.date(2025, 11, 17))
         
+        st.markdown("<h4 style='font-weight: 600; font-size: 1.25rem; margin-top: 2rem; margin-bottom: 1.5rem;'>Photo & Adjustments</h4>", unsafe_allow_html=True)
+        with st.container(border=True):
+            photo_file = st.file_uploader("Upload Portrait Photo", type=["jpg", "jpeg", "png"])
+            use_ai_removal = st.checkbox("Local AI Background Removal (Free)", value=True)
+            
+            st.markdown("<p style='font-weight: 500; font-size: 0.75rem; color: #6B7280; text-transform: uppercase; letter-spacing: 0.05em; margin-top: 1rem; margin-bottom: 0.5rem;'>Precision Placement</p>", unsafe_allow_html=True)
+            scale = st.slider("Photo Scale", 0.5, 3.0, 1.0, 0.05)
+            x_offset = st.slider("Horizontal Move (X)", -100, 100, 0, 1)
+            y_offset = st.slider("Vertical Move (Y)", -100, 100, 0, 1)
+
         st.markdown("<h4 style='font-weight: 600; font-size: 1.25rem; margin-top: 2rem; margin-bottom: 1.5rem;'>Back Side Details</h4>", unsafe_allow_html=True)
         with st.container(border=True):
             st.markdown("<p style='font-weight: 500; font-size: 0.75rem; color: #6B7280; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 1rem;'>Emergency & Health</p>", unsafe_allow_html=True)
@@ -66,11 +60,6 @@ def render():
             st.markdown("<p style='font-weight: 500; font-size: 0.75rem; color: #6B7280; text-transform: uppercase; letter-spacing: 0.05em; margin-top: 1rem; margin-bottom: 0.5rem;'>Office Address</p>", unsafe_allow_html=True)
             office_choice = st.selectbox("Select Office", list(offices.keys()))
             office_address = st.text_area("Edit Address", offices[office_choice], height=100)
-        
-        with st.container(border=True):
-            st.markdown("<p style='font-weight: 500; font-size: 0.75rem; color: #6B7280; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 1rem;'>Profile Media</p>", unsafe_allow_html=True)
-            photo_file = st.file_uploader("Upload Portrait Photo", type=["jpg", "jpeg", "png"])
-            remove_bg = st.checkbox("AI Background Removal (Photoroom)", value=True)
 
         generate_btn = st.button("Generate ID Card", use_container_width=True)
 
@@ -79,13 +68,13 @@ def render():
         
         if not (generate_btn and photo_file):
              with st.container(border=True):
-                st.info("Upload a photo and fill in the details to generate the card.", icon="🪪")
+                st.info("Upload a photo and tweak the sliders to see the preview.", icon="🪪")
 
         if generate_btn and photo_file:
             photo_bytes = photo_file.read()
             
-            with st.spinner("AI is processing image and generating PDF..."):
-                if remove_bg:
+            with st.spinner("AI is processing image..."):
+                if use_ai_removal:
                     processed_photo = remove_background(photo_bytes)
                 else:
                     processed_photo = photo_bytes
@@ -125,7 +114,7 @@ def render():
                         blue_text = (18/255, 34/255, 66/255)
                         white_text = (1, 1, 1)
                         
-                        # Front Text Insertion
+                        # Front Text
                         page0.insert_text((14.8, 148), first_name.upper(), fontsize=15, fontname="ru-bold", color=blue_text)
                         page0.insert_text((15.0, 168), last_name.upper(), fontsize=11, fontname="ru-reg", color=blue_text)
                         page0.insert_text((15.5, 183), title, fontsize=8, fontname="ru-reg", color=blue_text)
@@ -134,10 +123,18 @@ def render():
                         page0.insert_text((15.1, 196), f"D.O.J:  {date_str}", fontsize=8, fontname="ru-bold", color=blue_text)
                         page0.insert_text((15.6, 226), f"ID Number: {id_number}", fontsize=10, fontname="ru-reg", color=white_text)
                         
-                        # Front Photo
-                        photo_rect = fitz.Rect(15, 28, 110, 126)
-                        # The original code had PIL image processing here, but the instruction implies direct stream usage.
-                        # If further image manipulation (e.g., cropping, resizing) is needed, PIL should be re-integrated.
+                        # --- DYNAMIC PHOTO PLACEMENT ---
+                        # Base coordinates from previous refinement
+                        # Base rect: (15, 28, 110, 126) -> width: 95, height: 98
+                        base_x, base_y = 15 + x_offset, 28 + y_offset
+                        base_w, base_h = 95 * scale, 98 * scale
+                        
+                        # Center the scaled image within the movement
+                        # Adjust base_x/y to keep it centered when scaling
+                        adj_x = base_x - (base_w - 95) / 2
+                        adj_y = base_y - (base_h - 98) / 2
+                        
+                        photo_rect = fitz.Rect(adj_x, adj_y, adj_x + base_w, adj_y + base_h)
                         page0.insert_image(photo_rect, stream=processed_photo)
                         
                         # BACK PAGE (Index 1)
@@ -147,25 +144,17 @@ def render():
                                 if os.path.exists(path):
                                     page1.insert_font(fontname=name, fontfile=path)
                             
-                            # Backside Text
                             page1.insert_text((20, 93), f"Emergency Number: {emergency_no}", fontsize=7, fontname="ru-reg", color=white_text)
                             page1.insert_text((49, 106), f"Blood Group: {blood_group}", fontsize=7, fontname="ru-reg", color=white_text)
-                            
-                            # Backside Title
                             page1.insert_text((20, 167), "Trikon Telesoft Private Limited", fontsize=7, fontname="ru-semi", color=white_text)
                             
-                            # Address Multi-line
                             addr_lines = office_address.split("\n")
-                            y_offset = 173
+                            y_start = 173
                             for line in addr_lines:
-                                page1.insert_text((15, y_offset), line.strip(), fontsize=6.5, fontname="ru-reg", color=white_text)
-                                y_offset += 8.5
+                                page1.insert_text((15, y_start), line.strip(), fontsize=6.5, fontname="ru-reg", color=white_text)
+                                y_start += 8.5
                         
-                        # Log to Supabase
-                        import utils.db as db
-                        db.log_generation(tool="ID Card", name=f"{first_name} {last_name}", metadata={"id": id_number})
-
-                        # Preview (Front & Back)
+                        # Preview
                         st.markdown("### Front Side")
                         pix0 = page0.get_pixmap(matrix=fitz.Matrix(3, 3))
                         st.image(pix0.tobytes("png"), use_column_width=True)
@@ -178,12 +167,13 @@ def render():
                         pdf_bytes = doc.write()
                         st.download_button(
                             label="Download Full ID Card (2 Pages)",
+                            set_page_config=False,
                             data=pdf_bytes,
                             file_name=f"ID_Card_{id_number}.pdf",
                             mime="application/pdf"
                         )
                         doc.close()
                     else:
-                        st.error(f"Template not found. Searched: {possible_paths}")
+                        st.error(f"Template not found.")
                 except Exception as e:
                     st.error(f"Error: {e}")
