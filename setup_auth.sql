@@ -13,7 +13,7 @@ CREATE TABLE IF NOT EXISTS users (
 INSERT INTO users (email, password_hash, role, allowed_tools)
 VALUES (
     'admin@trikon.com', 
-    '240be518fabd2724ddb6f0403f350914e06bc10c7c81794081c9745b417e3391', 
+    '240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9', 
     'admin', 
     ARRAY['Dashboard', 'Business Card', 'Welcome Aboard', 'ID Card', 'Settings']
 )
