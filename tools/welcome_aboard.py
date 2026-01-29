@@ -35,7 +35,7 @@ def render():
         st.markdown("<h4 style='font-weight: 600; font-size: 1.25rem; margin-bottom: 1.5rem;'>Employee Setup</h4>", unsafe_allow_html=True)
         
         with st.container(border=True):
-            st.markdown("<p style='font-weight: 600; font-size: 0.8rem; color: #86868B; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 1rem;'>Personal Information</p>", unsafe_allow_html=True)
+            st.markdown("<p style='font-weight: 500; font-size: 0.75rem; color: #6B7280; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 1rem;'>Personal Information</p>", unsafe_allow_html=True)
             c1, c2 = st.columns(2)
             with c1:
                 first_name = st.text_input("First Name", "Suresh")
@@ -43,7 +43,7 @@ def render():
                 last_name = st.text_input("Last Name", "Kumar")
             title = st.text_input("Job Title", "Technical Support Executive")
         with st.container(border=True):
-            st.markdown("<p style='font-weight: 600; font-size: 0.8rem; color: #86868B; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 1rem;'>Join Date & Media</p>", unsafe_allow_html=True)
+            st.markdown("<p style='font-weight: 500; font-size: 0.75rem; color: #6B7280; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 1rem;'>Join Date & Media</p>", unsafe_allow_html=True)
             date_obj = st.date_input("Joining Date", datetime.date(2026, 1, 12))
             photo_file = st.file_uploader("Upload Profile Photo", type=["jpg", "jpeg", "png"])
             

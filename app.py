@@ -15,31 +15,25 @@ st.markdown("""
     :root {
         --primary: #000000;
         --accent: #0071E3;
-        --bg: #F5F5F7;
-        --sidebar-bg: rgba(255, 255, 255, 0.7); /* Glass Sidebar */
-        --card-bg: rgba(255, 255, 255, 0.8); /* Glass Card */
-        --text: #1D1D1F;
-        --text-secondary: #86868B;
-        --border: rgba(210, 210, 215, 0.4);
+        --bg: #F9FAFB; /* Linear Neutral Background */
+        --sidebar-bg: #FFFFFF;
+        --card-bg: #FFFFFF;
+        --text: #111827;
+        --text-secondary: #6B7280;
+        --border: #E5E7EB; /* Crisp Thin Border */
+        --radius: 12px;
     }
 
-    /* Modern Mesh Gradient Background */
+    /* Modern Minimalist Background */
     .stApp {
-        background-color: #F5F5F7;
-        background-image: 
-            radial-gradient(at 0% 0%, rgba(0, 113, 227, 0.05) 0px, transparent 50%),
-            radial-gradient(at 100% 0%, rgba(134, 134, 139, 0.05) 0px, transparent 50%),
-            radial-gradient(at 100% 100%, rgba(0, 113, 227, 0.03) 0px, transparent 50%),
-            radial-gradient(at 0% 100%, rgba(134, 134, 139, 0.03) 0px, transparent 50%);
+        background-color: var(--bg);
         color: var(--text);
         font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
     }
 
-    /* Glassmorphism Sidebar */
+    /* Sidebar - Crisp & Clean */
     section[data-testid="stSidebar"] {
         background-color: var(--sidebar-bg) !important;
-        backdrop-filter: blur(20px) !important;
-        -webkit-backdrop-filter: blur(20px) !important;
         border-right: 1px solid var(--border) !important;
     }
     
@@ -56,23 +50,37 @@ st.markdown("""
         display: none !important;
     }
 
-    /* Bento Box Card System */
-    .bento-card {
-        background: var(--card-bg);
-        backdrop-filter: blur(16px);
-        -webkit-backdrop-filter: blur(16px);
-        border: 1px solid var(--border);
-        border-radius: 24px;
-        padding: 2rem;
-        box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04);
-        margin-bottom: 1.5rem;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    /* Bento Grid System - Crisp White Cards */
+    [data-testid="stVerticalBlockBorderWrapper"] > div {
+        background: var(--card-bg) !important;
+        border: 1px solid var(--border) !important;
+        border-radius: var(--radius) !important;
+        padding: 2rem !important;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
+        margin-bottom: 1.5rem !important;
     }
 
-    .bento-card:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 12px 32px rgba(0, 0, 0, 0.08);
-        border-color: rgba(0, 113, 227, 0.2);
+    /* Metric Cards - Minimalist Pro */
+    [data-testid="stMetric"] {
+        background: var(--card-bg) !important;
+        border: 1px solid var(--border) !important;
+        border-radius: var(--radius) !important;
+        padding: 1.5rem !important;
+        box-shadow: 0 1px 2px rgba(0,0,0,0.05) !important;
+    }
+
+    [data-testid="stMetricLabel"] {
+        color: var(--text-secondary) !important;
+        font-weight: 500 !important;
+        text-transform: uppercase !important;
+        letter-spacing: 0.05em !important;
+        font-size: 0.75rem !important;
+    }
+
+    [data-testid="stMetricValue"] {
+        color: var(--text) !important;
+        font-weight: 700 !important;
+        letter-spacing: -0.03em !important;
     }
 
     /* Typography */
@@ -80,80 +88,45 @@ st.markdown("""
         font-family: 'Inter', sans-serif !important;
         font-weight: 700 !important;
         color: var(--text) !important;
-        letter-spacing: -0.03em !important;
+        letter-spacing: -0.04em !important;
     }
 
-    p, span, label {
-        letter-spacing: -0.01em !important;
-    }
-
-    /* Metric Cards Integration (Streamlit Native override) */
-    /* Bento Box Card System - Overriding st.container(border=True) */
-    [data-testid="stVerticalBlockBorderWrapper"] > div {
-        background: var(--card-bg) !important;
-        backdrop-filter: blur(16px) !important;
-        -webkit-backdrop-filter: blur(16px) !important;
-        border: 1px solid var(--border) !important;
-        border-radius: 24px !important;
-        padding: 1.5rem !important;
-        box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04) !important;
-        margin-bottom: 1.5rem !important;
-        animation: fadeIn 0.8s ease-out;
-    }
-
-    @keyframes fadeIn {
-        from { opacity: 0; transform: translateY(10px); }
-        to { opacity: 1; transform: translateY(0); }
-    }
-
-    /* Metric Cards Integration */
-    [data-testid="stMetric"] {
-        background: var(--card-bg) !important;
-        backdrop-filter: blur(12px) !important;
-        border: 1px solid var(--border) !important;
-        border-radius: 20px !important;
-        padding: 1.5rem !important;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.02) !important;
-        animation: fadeIn 0.6s ease-out;
-    }
-
-    /* Re-styling Inputs for "App" Look */
+    /* Re-styling Inputs for "Linear" Look */
     .stTextInput>div>div>input, .stSelectbox>div>div>div {
-        background-color: rgba(255, 255, 255, 0.8) !important;
-        border-radius: 14px !important;
-        border: 1px solid #D2D2D7 !important;
-        padding: 0.7rem 1rem !important;
-        transition: all 0.2s ease !important;
+        background-color: white !important;
+        border-radius: 8px !important;
+        border: 1px solid var(--border) !important;
+        padding: 0.5rem 0.75rem !important;
+        font-size: 0.95rem !important;
+        color: var(--text) !important;
     }
     
     .stTextInput>div>div>input:focus {
         border-color: var(--accent) !important;
-        box-shadow: 0 0 0 4px rgba(0, 113, 227, 0.1) !important;
-        background-color: white !important;
+        box-shadow: 0 0 0 2px rgba(0, 113, 227, 0.1) !important;
     }
 
-    /* Custom Button Overhaul */
+    /* Precision Button Style */
     .stButton>button {
-        background: var(--accent) !important;
+        background: var(--primary) !important;
         color: white !important;
-        border-radius: 14px !important; /* Squircle style */
-        border: none !important;
-        padding: 0.8rem 2rem !important;
-        font-weight: 600 !important;
+        border-radius: 8px !important;
+        border: 1px solid var(--primary) !important;
+        padding: 0.6rem 1.5rem !important;
+        font-weight: 500 !important;
+        font-size: 0.95rem !important;
         width: 100% !important;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
-        box-shadow: 0 4px 12px rgba(0, 113, 227, 0.2) !important;
+        transition: all 0.2s ease !important;
     }
 
     .stButton>button:hover {
-        background: #005BBF !important;
-        transform: translateY(-2px) !important;
-        box-shadow: 0 8px 16px rgba(0, 113, 227, 0.3) !important;
+        background: #1F2937 !important;
+        border-color: #1F2937 !important;
     }
 
     /* Adjust Padding of Main Content */
     .block-container {
-        padding-top: 1.5rem !important;
+        padding-top: 2rem !important;
         padding-bottom: 50px !important;
     }
 
@@ -162,9 +135,11 @@ st.markdown("""
         display: none !important;
     }
 
-    /* Navigation Menu Styling Refinement */
+    /* Navigation Menu Style - Standard Professional */
     .nav-link-selected {
-        box-shadow: 0 4px 12px rgba(0, 113, 227, 0.2) !important;
+        background-color: #F3F4F6 !important;
+        color: var(--text) !important;
+        border: 1px solid var(--border) !important;
     }
 </style>
 """, unsafe_allow_html=True)

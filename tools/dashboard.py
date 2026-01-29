@@ -6,31 +6,27 @@ def render():
     st.markdown("""
     <style>
         .metric-card {
-            background: rgba(255, 255, 255, 0.8);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            padding: 2rem;
-            border-radius: 24px;
-            border: 1px solid rgba(210, 210, 215, 0.4);
-            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            background: #FFFFFF;
+            padding: 1.5rem;
+            border-radius: 12px;
+            border: 1px solid #E5E7EB;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+            transition: border-color 0.2s ease;
         }
         .metric-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.08);
-            border-color: rgba(0, 113, 227, 0.2);
+            border-color: #0071E3;
         }
         .metric-title {
-            color: #86868B;
-            font-size: 0.9rem;
-            font-weight: 600;
+            color: #6B7280;
+            font-size: 0.75rem;
+            font-weight: 500;
             text-transform: uppercase;
-            letter-spacing: 0.08em;
-            margin-bottom: 0.75rem;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.5rem;
         }
         .metric-value {
-            color: #1D1D1F;
-            font-size: 3rem;
+            color: #111827;
+            font-size: 2.25rem;
             font-weight: 700;
             letter-spacing: -0.04em;
         }
