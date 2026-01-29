@@ -34,16 +34,16 @@ def render():
     with col1:
         st.markdown("<h4 style='font-weight: 600; font-size: 1.25rem; margin-bottom: 1.5rem;'>Employee Setup</h4>", unsafe_allow_html=True)
         
-        with st.container():
-            st.markdown("<p style='font-weight: 600; font-size: 0.9rem; color: #86868B; text-transform: uppercase; letter-spacing: 0.05em;'>Personal info</p>", unsafe_allow_html=True)
+        with st.container(border=True):
+            st.markdown("<p style='font-weight: 600; font-size: 0.8rem; color: #86868B; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 1rem;'>Personal Information</p>", unsafe_allow_html=True)
             c1, c2 = st.columns(2)
             with c1:
                 first_name = st.text_input("First Name", "Suresh")
             with c2:
                 last_name = st.text_input("Last Name", "Kumar")
             title = st.text_input("Job Title", "Technical Support Executive")
-        with st.container():
-            st.markdown("<p style='font-weight: 600; font-size: 0.9rem; color: #86868B; text-transform: uppercase; letter-spacing: 0.05em;'>Join Date & Media</p>", unsafe_allow_html=True)
+        with st.container(border=True):
+            st.markdown("<p style='font-weight: 600; font-size: 0.8rem; color: #86868B; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 1rem;'>Join Date & Media</p>", unsafe_allow_html=True)
             date_obj = st.date_input("Joining Date", datetime.date(2026, 1, 12))
             photo_file = st.file_uploader("Upload Profile Photo", type=["jpg", "jpeg", "png"])
             
@@ -52,7 +52,11 @@ def render():
         generate_btn = st.button("Generate Welcome Image", use_container_width=True)
 
     with col2:
-        st.markdown("<h4 style='font-weight: 600; font-size: 1.25rem; margin-bottom: 1.5rem;'>Final Result</h4>", unsafe_allow_html=True)
+        st.markdown("<h4 style='font-weight: 600; font-size: 1.25rem; margin-bottom: 1.5rem;'>Live Result</h4>", unsafe_allow_html=True)
+        # Adding a placeholder container for preview if no image generated yet
+        if not (generate_btn and photo_file):
+            with st.container(border=True):
+                st.info("Fill in the details and upload a photo to see the live preview.", icon="📸")
         if generate_btn and photo_file:
             # Relative path for Cloud and Local
             current_dir = os.path.dirname(os.path.abspath(__file__))

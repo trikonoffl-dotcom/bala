@@ -22,16 +22,16 @@ def render():
             default_office = "1300 262 987"
 
 
-        with st.container():
-            st.markdown("<p style='font-weight: 600; font-size: 0.9rem; color: #86868B; text-transform: uppercase; letter-spacing: 0.05em;'>Employee Info</p>", unsafe_allow_html=True)
+        with st.container(border=True):
+            st.markdown("<p style='font-weight: 600; font-size: 0.8rem; color: #86868B; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 1rem;'>Employee Information</p>", unsafe_allow_html=True)
             c1, c2 = st.columns(2)
             with c1:
                 first_name = st.text_input("First Name", "John")
             with c2:
                 last_name = st.text_input("Last Name", "Doe")
             title = st.text_input("Job Title", "General Manager")
-        with st.container():
-            st.markdown("<p style='font-weight: 600; font-size: 0.9rem; color: #86868B; text-transform: uppercase; letter-spacing: 0.05em;'>Contact Details</p>", unsafe_allow_html=True)
+        with st.container(border=True):
+            st.markdown("<p style='font-weight: 600; font-size: 0.8rem; color: #86868B; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 1rem;'>Contact Details</p>", unsafe_allow_html=True)
             c1, c2 = st.columns(2)
             with c1:
                 phone_mobile = st.text_input("Mobile Phone", "0400 000 000")
@@ -43,8 +43,8 @@ def render():
                 email = st.text_input("Email", "john.doe@example.com")
             with c2:
                 website = st.text_input("Website", default_website)
-        with st.container():
-            st.markdown("<p style='font-weight: 600; font-size: 0.9rem; color: #86868B; text-transform: uppercase; letter-spacing: 0.05em;'>Office Location</p>", unsafe_allow_html=True)
+        with st.container(border=True):
+            st.markdown("<p style='font-weight: 600; font-size: 0.8rem; color: #86868B; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 1rem;'>Office Location</p>", unsafe_allow_html=True)
             addresses = [
                 "3/7 Meridian Place, Bella Vista NSW 2153, Australia",
                 "Suite 208, 111 Overton Rd, Williams Landing VIC 3030, Australia",
@@ -86,7 +86,7 @@ def render():
         generate_btn = st.button("Generate Card")
 
     with col2:
-        st.subheader("Preview")
+        st.markdown("<h4 style='font-weight: 600; font-size: 1.25rem; margin-bottom: 1.5rem;'>Live Preview</h4>", unsafe_allow_html=True)
         if generate_btn:
             # Determine Path
             current_dir = os.path.dirname(os.path.abspath(__file__))
