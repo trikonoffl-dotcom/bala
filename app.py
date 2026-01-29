@@ -79,10 +79,10 @@ st.markdown("""
         box-shadow: 0 2px 4px rgba(0,0,0,0.02) !important;
     }
 
-    /* Reduce Top Padding of Main Content */
+    /* Adjust Padding of Main Content */
     .block-container {
         padding-top: 1rem !important;
-        padding-bottom: 0rem !important;
+        padding-bottom: 15px !important;
     }
 
     /* Hide Streamlit Header gap */
